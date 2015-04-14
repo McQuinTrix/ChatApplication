@@ -19,7 +19,6 @@ io.sockets.on('connection',function(socket){
 			callback(true);
 			socket.nickname = data;
 			nicknames.push(socket.nickname);
-			io.sockets.emit('usernames', nicknames);
 			updateNicks();
 		}
 	});
