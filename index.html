@@ -70,7 +70,7 @@
 			
 			socket.on('usernames',function(data){
 				var html = '';
-				for(i=0; i<data.length; i++){
+				for(var i=0; i<data.length; i++){
 					html += data[i] +'<br/>';
 				}
 				$users.html(html);
@@ -83,6 +83,16 @@
 				});
 				$messageBox.val('');
 			});
+
+			socket.on('loadold',function(docs){
+				for(var i=docs.length-1;i>=0;i--){
+					displayMsg(docs[i]);
+				}
+			});
+			
+			function displayMsg(data){
+				$chat.append('<span class="msg"><b>'+data.nick+'</b>: '+data.msg+"</span><br/>");
+			}
 			socket.on('new message', function(data){
 				$chat.append('<span class="msg"><b>'+data.nick+'</b>: '+data.msg+"</span><br/>");
 			});
