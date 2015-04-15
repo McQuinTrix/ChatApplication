@@ -5,13 +5,36 @@ var express 	= require("express"),
 	users = {};
 	// the socket object listens to http objects
 
-server.listen(3001);
+server.listen(3015);
 
 app.get('/',function(req,res){
 	res.sendfile(__dirname+'/index.html');
 });
 
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/chat',function(err){
+	if(err){console.log(err);}else{console.log("Connected!");}
+});
+
+var chatSchema = mongoose.Schema({
+	nick: String,
+	msg: String,
+	created: {type: Date, default:Date.now}
+});
+
+var Chat = mongoose.model('Message',chatSchema);
+
 io.sockets.on('connection',function(socket){
+	/*Chat.find({},function(err,docs){
+		if(err) throw err;
+		socket.emit('loadold',docs);
+	});*/
+	//This model for full chats
+	var query = Chat.find({});
+        query.sort('-created').limit(8).exec(function(err,data){
+		if(err) throw err;
+		socket.emit('loadold', data);
+	});
 	socket.on('new user',function(data,callback){
 		if(data in users){
 			callback(false);
@@ -41,7 +64,11 @@ io.sockets.on('connection',function(socket){
 				callback('Please put a message in correct format!');
 			}
 		}else{
-			io.sockets.emit('new message',{msg: data, nick: socket.nickname});
+			var newMsg = new Chat({msg: msg, nick: socket.nickname});
+			newMsg.save(function(err){
+				if(err) throw err;
+				io.sockets.emit('new message',{msg: msg, nick: socket.nickname});
+			});
 		}//socket.broadcast.emit('new message', data);
 	});
 	socket.on('disconnect',function(data){
@@ -51,3 +78,4 @@ io.sockets.on('connection',function(socket){
 		io.sockets.emit('disco',{nick: socket.nickname});
 	});
 });
+
