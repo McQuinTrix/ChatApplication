@@ -25,10 +25,6 @@ var chatSchema = mongoose.Schema({
 var Chat = mongoose.model('Message',chatSchema);
 
 io.sockets.on('connection',function(socket){
-	/*Chat.find({},function(err,docs){
-		if(err) throw err;
-		socket.emit('loadold',docs);
-	});*/
 	//This model for full chats
 	var query = Chat.find({});
         query.sort('-created').limit(8).exec(function(err,data){
@@ -69,7 +65,7 @@ io.sockets.on('connection',function(socket){
 				if(err) throw err;
 				io.sockets.emit('new message',{msg: msg, nick: socket.nickname});
 			});
-		}//socket.broadcast.emit('new message', data);
+		}
 	});
 	socket.on('disconnect',function(data){
 		if(!socket.nickname) return;
