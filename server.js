@@ -46,6 +46,7 @@ io.sockets.on('connection',function(socket){
 	}
 	socket.on('send message', function(data,callback){
 		var msg = data.trim();
+		/***This part has to do with Private messaging between two users***/
 		if(msg.substr(0,3) == '/w '){
 			msg = msg.substr(3);
 			var ind = msg.indexOf(" ");
@@ -59,6 +60,7 @@ io.sockets.on('connection',function(socket){
 			}else{
 				callback('Please put a message in correct format!');
 			}
+		/*******************Private Messaging Part Ends**********************/
 		}else{
 			var newMsg = new Chat({msg: msg, nick: socket.nickname});
 			newMsg.save(function(err){
