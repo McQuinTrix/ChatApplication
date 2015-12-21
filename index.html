@@ -93,12 +93,15 @@
 			function displayMsg(data){
 				$chat.append('<span class="msg"><b>'+data.nick+'</b>: '+data.msg+"</span><br/>");
 			}
+			//On New Message
 			socket.on('new message', function(data){
 				$chat.append('<span class="msg"><b>'+data.nick+'</b>: '+data.msg+"</span><br/>");
 			});
+			//On disconnect by any user
 			socket.on('disco', function(data){
 				$chat.append('<i>'+data.nick+' left the chat</i><br/> ');
 			});
+			//On whisper(private message)
 			socket.on('whisper',function(data){
 				$chat.append('<span class="whisper"><b>'+data.nick+': </b>'+data.msg+'</span><br/>');
 			});
